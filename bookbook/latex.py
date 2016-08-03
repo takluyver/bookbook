@@ -32,6 +32,34 @@ def new_latex_cell(source=''):
         source=source,
     )
 
+class NoHeader(Exception): pass
+
+def add_sec_label(cell: NotebookNode, nbname) -> Sequence[NotebookNode]:
+    """Adds a Latex \\label{} under the chapter heading.
+
+    This takes the first cell of a notebook, and expects it to be a Markdown
+    cell starting with a level 1 heading. It inserts a label with the notebook
+    name just underneath this heading.
+    """
+    assert cell.cell_type == 'markdown', cell.cell_type
+    lines = cell.source.splitlines()
+    if lines[0].startswith('# '):
+        header_lines = 1
+    elif len(lines) > 1 and lines[1].startswith('==='):
+        header_lines = 2
+    else:
+        raise NoHeader
+
+    header = '\n'.join(lines[:header_lines])
+    intro_remainder = '\n'.join(lines[header_lines:]).strip()
+    res = [
+        new_markdown_cell(header),
+        new_latex_cell('\label{sec:%s}' % nbname)
+    ]
+    res[0].metadata = cell.metadata
+    if intro_remainder:
+        res.append(new_markdown_cell(intro_remainder))
+    return res
 
 def combine_notebooks(notebook_files: Sequence[Path]) -> NotebookNode:
     combined_nb = new_notebook()
@@ -43,21 +71,10 @@ def combine_notebooks(notebook_files: Sequence[Path]) -> NotebookNode:
         nbname = filename.stem
         nb = nbformat.read(str(filename), as_version=4)
 
-        assert nb.cells[0].cell_type == 'markdown', nb.cells[0].cell_type
-        c0_lines = nb.cells[0].source.splitlines()
-        if c0_lines[0].startswith('# '):
-            header_lines = 1
-        elif len(c0_lines) > 1 and c0_lines[1].startswith('==='):
-            header_lines = 2
-        else:
-            raise Exception("Failed to find header in " + filename)
-
-        header = '\n'.join(c0_lines[:header_lines])
-        intro_remainder = '\n'.join(c0_lines[header_lines:]).strip()
-        combined_nb.cells.append(new_markdown_cell(header))
-        combined_nb.cells.append(new_latex_cell('\label{sec:%s}' % nbname))
-        if intro_remainder:
-            combined_nb.cells.append(new_markdown_cell(intro_remainder))
+        try:
+            combined_nb.cells.extend(add_sec_label(nb.cells[0], nbname))
+        except NoHeader:
+            raise NoHeader("Failed to find header in " + filename)
 
         combined_nb.cells.extend(nb.cells[1:])
 
