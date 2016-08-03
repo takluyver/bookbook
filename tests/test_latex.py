@@ -2,6 +2,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from testpath import assert_isfile
 
+from nbformat.v4 import new_markdown_cell
+
 from bookbook import latex
 
 sample_dir = Path(__file__).parent / 'sample'
@@ -29,3 +31,24 @@ def test_convert_link():
     # Links to external sites shouldn't be converted
     sample = "[link](http://example.com/01-abc.ipynb)"
     assert '01-abc.ipynb' in latex.pandoc_convert_links(sample)
+
+def test_add_sec_label():
+    sample = ("# Foo\n"
+              "\n"
+              "Bar")
+    res = latex.add_sec_label(new_markdown_cell(sample), '05-test')
+    assert len(res) == 3
+    assert res[0].cell_type == 'markdown'
+    assert res[0].source.strip() == '# Foo'
+    assert res[1].cell_type == 'raw'
+    assert res[1].source.strip() == '\\label{sec:05-test}'
+    assert res[2].cell_type == 'markdown'
+
+    sample = ("Foo\n"
+              "===\n")
+    res = latex.add_sec_label(new_markdown_cell(sample), '05-test')
+    assert len(res) == 2
+    assert res[0].cell_type == 'markdown'
+    assert res[0].source.strip() == 'Foo\n==='
+    assert res[1].cell_type == 'raw'
+    assert res[1].source.strip() == '\\label{sec:05-test}'
