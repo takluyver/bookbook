@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+"""Converts a collection of notebooks to HTML files."""
 import argparse
 import logging
 from pathlib import Path

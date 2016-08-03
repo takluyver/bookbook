@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Convert the collection of notebooks in this directory to a single PDF.
+"""Convert a collection of notebooks to a single PDF, via Latex.
 
 - Combines notebooks into one document
 - Inserts Latex labels for each document
@@ -12,7 +11,6 @@ Requirements:
 - pdflatex
 """
 import argparse
-import glob
 import logging
 import os
 from pathlib import Path
