@@ -11,3 +11,11 @@ It expects a directory of notebooks whose names indicate their order, e.g.
 
 Add ``--help`` to either command for more options.
 
+installation
+------------
+
+To install locally as an editable install run::
+
+    pip install flit
+    flit install --symlink
+
