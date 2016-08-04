@@ -11,11 +11,19 @@ It expects a directory of notebooks whose names indicate their order, e.g.
 
 Add ``--help`` to either command for more options.
 
-installation
+Installation
 ------------
 
-To install locally as an editable install run::
+Bookbook requires Python 3.5.
+
+::
+
+    pip install bookbook
+
+To install locally as an editable install, run::
 
     pip install flit
+    git clone https://github.com/takluyver/bookbook.git
+    cd bookbook
     flit install --symlink
 
