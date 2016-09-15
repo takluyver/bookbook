@@ -14,6 +14,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
+from tempfile import mkdtemp
 from typing import Sequence
 
 import nbformat
@@ -100,21 +101,46 @@ class MyLatexPDFExporter(PDFExporter):
         yield from super().default_filters()
         yield ('markdown2latex', pandoc_convert_links)
 
-def export(combined_nb: NotebookNode, output_file: Path, pdf=False):
+def add_preamble(extra_preamble_file, exporter):
+    if extra_preamble_file is None:
+        return
+
+    with extra_preamble_file.open() as f:
+        extra_preamble = f.read()
+
+    td = mkdtemp()
+    print(td)
+    template_path = Path(td, 'with_extra_preamble.tplx')
+    with template_path.open('w') as f:
+        f.write("((* extends 'article.tplx' *))\n"
+                '((* block header *))\n'
+                '((( super() )))\n'
+               )
+        f.write(extra_preamble)
+        f.write('((* endblock header *))\n'
+                )
+
+    # Not using append, because we need an assignment to trigger traitlet change
+    exporter.template_path = exporter.template_path + [td]
+    exporter.template_file = 'with_extra_preamble'
+
+def export(combined_nb: NotebookNode, output_file: Path, pdf=False,
+           extra_preamble_file=None):
     resources = {}
     resources['unique_key'] = 'combined'
     resources['output_files_dir'] = 'combined_files'
 
     log.info('Converting to %s', 'pdf' if pdf else 'latex')
     exporter = MyLatexPDFExporter() if pdf else MyLatexExporter()
+    add_preamble(extra_preamble_file, exporter)
     writer = FilesWriter(build_directory=str(output_file.parent))
     output, resources = exporter.from_notebook_node(combined_nb, resources)
     writer.write(output, resources, notebook_name=output_file.stem)
 
-def combine_and_convert(source_dir: Path, output_file: Path, pdf=False):
+def combine_and_convert(source_dir: Path, output_file: Path, pdf=False, extra_preamble_file=None):
     notebook_files = sorted(source_dir.glob('*-*.ipynb'))
     combined_nb = combine_notebooks(notebook_files)
-    export(combined_nb, output_file, pdf=pdf)
+    export(combined_nb, output_file, pdf=pdf, extra_preamble_file=extra_preamble_file)
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Convert a set of notebooks to PDF via Latex')
@@ -124,10 +150,12 @@ def main(argv=None):
                     help='Directory where output files will be written')
     ap.add_argument('--pdf', action='store_true',
                     help='Run Latex to convert to PDF.')
+    ap.add_argument('--extra-preamble', type=Path,
+                    help='Latex file with extra commands to add to the preamble.')
     args = ap.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO)
-    combine_and_convert(args.source_dir, args.output_file, args.pdf)
+    combine_and_convert(args.source_dir, args.output_file, args.pdf, args.extra_preamble)
 
 if __name__ == '__main__':
     main()
