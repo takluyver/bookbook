@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>Table of Contents</title>
+<style>
+body {
+    font-family: sans-serif;
+}
+</style>
 </head>
 
 <body>

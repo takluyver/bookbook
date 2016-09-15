@@ -11,6 +11,7 @@ from nbconvert.filters.markdown_mistune import MarkdownWithMath, IPythonRenderer
 from jinja2 import Environment, FileSystemLoader
 
 _PKGDIR = Path(__file__).parent
+log = logging.getLogger(__name__)
 
 class MyMarkdownRenderer(IPythonRenderer):
     def link(self, link, title, text):
@@ -65,6 +66,7 @@ def write_index(index_entries, output_dir):
     template = env.get_template('html_index.tpl')
 
     index_entries.sort(key=lambda e: e.chapter_no)
+    log.info('Writing table of contents')
     with (output_dir / 'index.html').open('w') as f:
         f.write(template.render(index_entries=index_entries))
 
