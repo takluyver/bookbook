@@ -3,6 +3,7 @@ import argparse
 import logging
 from pathlib import Path
 import re
+import os
 
 import nbformat
 from nbconvert.exporters import HTMLExporter
@@ -75,6 +76,9 @@ def convert_directory(source_dir: Path, output_dir: Path):
     for nbfile in source_dir.glob('*-*.ipynb'):
         convert(nbfile, output_dir)
         index_entries.append(IndexEntry.from_notebook_file(nbfile))
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     write_index(index_entries, output_dir)
 
