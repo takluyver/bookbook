@@ -77,8 +77,7 @@ def convert_directory(source_dir: Path, output_dir: Path):
         convert(nbfile, output_dir)
         index_entries.append(IndexEntry.from_notebook_file(nbfile))
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    output_dir.mkdir(exist_ok=True, parents=True)
 
     write_index(index_entries, output_dir)
 
