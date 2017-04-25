@@ -3,6 +3,7 @@ python:
   - "3.6"
 install:
 - pip install flit
+- pip install jupyter_client
 - flit install
 # command to run tests
 script: py.test
