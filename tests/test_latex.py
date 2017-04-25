@@ -32,6 +32,13 @@ def test_convert_link():
     sample = "[link](http://example.com/01-abc.ipynb)"
     assert '01-abc.ipynb' in latex.pandoc_convert_links(sample)
 
+def test_exporter_converts_links():
+    out, res = latex.MyLatexExporter().from_filename(
+                    str(sample_dir / '01-introduction.ipynb'))
+    assert 'Section \\ref{sec:02-in-which-we}' in out
+    assert 'Section \\ref{just-a-subheading}' in out
+
+
 def test_add_sec_label():
     sample = ("# Foo\n"
               "\n"

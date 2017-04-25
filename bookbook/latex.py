@@ -23,6 +23,7 @@ from nbformat.v4 import new_notebook, new_markdown_cell
 from nbconvert.exporters import PDFExporter, LatexExporter
 from nbconvert.writers import FilesWriter
 from nbconvert.utils.pandoc import pandoc
+from .filter_links import convert_links
 
 log = logging.getLogger(__name__)
 
@@ -94,12 +95,12 @@ def pandoc_convert_links(source):
 class MyLatexExporter(LatexExporter):
     def default_filters(self):
         yield from super().default_filters()
-        yield ('markdown2latex', pandoc_convert_links)
+        yield ('resolve_references', convert_links)
 
 class MyLatexPDFExporter(PDFExporter):
     def default_filters(self):
         yield from super().default_filters()
-        yield ('markdown2latex', pandoc_convert_links)
+        yield ('resolve_references', convert_links)
 
 def add_preamble(extra_preamble_file, exporter):
     if extra_preamble_file is None:

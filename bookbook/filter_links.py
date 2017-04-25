@@ -5,7 +5,7 @@ Converts links between notebooks to Latex cross-references.
 """
 import re
 
-from pandocfilters import toJSONFilter, RawInline
+from pandocfilters import toJSONFilter, applyJSONFilters, RawInline
 
 def convert_link(key, val, fmt, meta):
     if key == 'Link':
@@ -24,6 +24,9 @@ def convert_link(key, val, fmt, meta):
             return RawInline('tex', 'Section \\ref{%s}' % label)
 
     # Other elements will be returned unchanged.
+
+def convert_links(source):
+    return applyJSONFilters([convert_link], source)
 
 if __name__ == "__main__":
     toJSONFilter(convert_link)
