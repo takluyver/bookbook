@@ -149,7 +149,7 @@ def main(argv=None):
     ap.add_argument('source_dir', nargs='?', type=Path, default='.',
                     help='Directory containing the .ipynb files')
     ap.add_argument('--output-file', type=Path, default='combined',
-                    help='Directory where output files will be written')
+                    help='Base name of the output file.')
     ap.add_argument('--pdf', action='store_true',
                     help='Run Latex to convert to PDF.')
     ap.add_argument('--template', type=Path,
