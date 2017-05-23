@@ -71,6 +71,7 @@ Examples of projects using bookbook
 Related tools
 -------------
 If you are writing a book in Jupyter notebooks, you may also find these to be useful:
+
 - `nbopen <https://github.com/takluyver/nbopen>`_: open notebooks from the command line without launching a new notebook server.  We find it useful to launch a single server in your home directory; then nbopen will use that to open each notebook.
 - `nbdime <https://github.com/jupyter/nbdime>`_: diff/merge for notebooks; includes terminal or graphical output.
 - `nbstripout <https://github.com/kynan/nbstripout>`_: remove output from notebooks before committing them.
