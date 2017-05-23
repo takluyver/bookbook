@@ -59,18 +59,18 @@ Latex formatting
 ----------------
 bookbook uses nbconvert under the hood.  Custom formatting of latex output
 can be accomplished by using a template, in the same way as would be done
-using nbconvert by itself.  See [the nbconvert
-documentation](http://nbconvert.readthedocs.io/en/latest/customizing.html) for
+using nbconvert by itself.  See `the nbconvert
+documentation <http://nbconvert.readthedocs.io/en/latest/customizing.html>`_ for
 more details.
 
 
 Examples of projects using bookbook
 -----------------------------------
-- [Book on Riemann solvers](http://github.com/clawpack/riemann_book) (in development) by David Ketcheson, Mauricio del Razo, and Randall LeVeque.  This example uses a custom nbconvert template and shows how to store your notebooks with no output (for version control) while automatically executing them before running bookbook, so that PDF and HTML versions include the output.
+- `Book on Riemann solvers <http://github.com/clawpack/riemann_book>`_ (in development) by David Ketcheson, Mauricio del Razo, and Randall LeVeque.  This example uses a custom nbconvert template and shows how to store your notebooks with no output (for version control) while automatically executing them before running bookbook, so that PDF and HTML versions include the output.
 
 Related tools
 -------------
 If you are writing a book in Jupyter notebooks, you may also find these to be useful:
-- [nbopen](https://github.com/takluyver/nbopen): open notebooks from the command line without launching a new notebook server.  We find it useful to launch a single server in your home directory; then nbopen will use that to open each notebook.
-- [nbdime](https://github.com/jupyter/nbdime): diff/merge for notebooks; includes terminal or graphical output.
-- [nbstripout](https://github.com/kynan/nbstripout): remove output from notebooks before committing them.
+- `nbopen <https://github.com/takluyver/nbopen>`_: open notebooks from the command line without launching a new notebook server.  We find it useful to launch a single server in your home directory; then nbopen will use that to open each notebook.
+- `nbdime <https://github.com/jupyter/nbdime>`_: diff/merge for notebooks; includes terminal or graphical output.
+- `nbstripout <https://github.com/kynan/nbstripout>`_: remove output from notebooks before committing them.
