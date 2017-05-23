@@ -13,7 +13,7 @@ def convert_link(key, val, fmt, meta):
         # Links to other notebooks
         m = re.match(r'(\d+\-.+)\.ipynb$', target)
         if m:
-            return RawInline('tex', 'Section \\ref{sec:%s}' % m.group(1))
+            return RawInline('tex', 'Chapter \\ref{sec:%s}' % m.group(1))
             
         # Links to sections of this or other notebooks
         m = re.match(r'(\d+\-.+\.ipynb)?#(.+)$', target)
