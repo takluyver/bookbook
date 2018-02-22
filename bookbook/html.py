@@ -11,6 +11,8 @@ from nbconvert.writers import FilesWriter
 from nbconvert.filters.markdown_mistune import MarkdownWithMath, IPythonRenderer
 from jinja2 import Environment, FileSystemLoader
 
+from traitlets.config import Config
+
 _PKGDIR = Path(__file__).parent
 log = logging.getLogger(__name__)
 
@@ -29,6 +31,21 @@ class MyHTMLExporter(HTMLExporter):
     def default_filters(self):
         yield from super().default_filters()
         yield ('markdown2html', markdown2html_custom)
+    def _template_file_default(self):
+        return 'toc2'
+    @property
+    def default_config(self):
+        c = Config()
+        #  import here to avoid circular import
+        from jupyter_contrib_nbextensions.nbconvert_support import (
+            templates_directory)
+        c.merge(super(MyHTMLExporter, self).default_config)
+
+        c.TemplateExporter.template_path = [
+            '.',
+            templates_directory(),
+        ]
+        return c
 
 class IndexEntry:
     def __init__(self, chapter_no, title, filename):
