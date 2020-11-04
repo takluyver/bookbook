@@ -1,11 +1,10 @@
 sudo: required
-dist: trusty
+dist: focal
 addons:
   apt:
     packages:
     - texlive-latex-extra # we need this for all the latex package we use, recommended is not enough
-    - texlive-generic-recommended # .. and more ...
-    - latex-xcolor # ... and more latex packages
+    - texlive-plain-generic # contains ulem.sty
     - texlive-fonts-recommended # fonts...
     - cm-super # more fonts
     - texlive-xetex # latex to pdf converter

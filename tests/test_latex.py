@@ -5,13 +5,36 @@ from testpath import assert_isfile
 from nbformat.v4 import new_markdown_cell
 
 from bookbook import latex
+from nbconvert import __version__ as nbconvert_version
 
 sample_dir = Path(__file__).parent / 'sample'
+
 
 def test_sampledir():
     with TemporaryDirectory() as td:
         td = Path(td)
         latex.combine_and_convert(sample_dir, td / 'combined.pdf', pdf=True)
+
+        assert_isfile(td / 'combined.pdf')
+
+
+def test_sampledir_with_template():
+    with TemporaryDirectory() as td:
+        td = Path(td)
+        # template extension name has changed since nbconvert 6.0
+        suffix = 'tex.j2' if nbconvert_version >= '6.0' else 'tplx'
+        template = f"""
+((* extends 'style_python.{suffix}' *))
+
+((* block docclass *))
+\\documentclass[11pt]{{book}}
+((* endblock docclass *))
+"""
+        template_path = td / "template.tex"
+        with template_path.open('w') as tp:
+            tp.write(template)
+        latex.combine_and_convert(sample_dir, td / 'combined.pdf', pdf=True,
+                                  template_file=template_path)
 
         assert_isfile(td / 'combined.pdf')
 
@@ -22,7 +45,6 @@ def test_convert_link():
     assert '\\ref{sec:01-abc}' in res
     assert '.ipynb' not in res
 
-
     sample = "[link](02-def.ipynb#Foo-bar)"
     res = latex.pandoc_convert_links(sample)
     assert '\\ref{foo-bar}' in res
@@ -32,9 +54,10 @@ def test_convert_link():
     sample = "[link](http://example.com/01-abc.ipynb)"
     assert '01-abc.ipynb' in latex.pandoc_convert_links(sample)
 
+
 def test_exporter_converts_links():
     out, res = latex.MyLatexExporter().from_filename(
-                    str(sample_dir / '01-introduction.ipynb'))
+        str(sample_dir / '01-introduction.ipynb'))
     assert 'Chapter \\ref{sec:02-in-which-we}' in out
     assert 'Section \\ref{just-a-subheading}' in out
 

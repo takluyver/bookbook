@@ -132,9 +132,11 @@ def export(combined_nb: NotebookNode, output_file: Path, pdf=False,
     resources['output_files_dir'] = 'combined_files'
 
     log.info('Converting to %s', 'pdf' if pdf else 'latex')
-    exporter = MyLatexPDFExporter() if pdf else MyLatexExporter()
+    Exporter = MyLatexPDFExporter if pdf else MyLatexExporter
     if template_file is not None:
-        exporter.template_file = str(template_file)
+        exporter = Exporter(template_file=str(template_file))
+    else:
+        exporter = Exporter()
     writer = FilesWriter(build_directory=str(output_file.parent))
     output, resources = exporter.from_notebook_node(combined_nb, resources)
     writer.write(output, resources, notebook_name=output_file.stem)
